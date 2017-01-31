@@ -1,10 +1,14 @@
-# ${1:Project Name}
+# \<eve-sso\>
 
 Polymer element to handle SSO for EVE Online.
 
 ## Installation
 
-TODO: Describe the installation process
+Simply install the package with `bower`.
+
+``$ bower install eve-sso``
+
+TODO: Setup bower.
 
 ## Usage
 
