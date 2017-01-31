@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`eve-sso`
+Manages SSO for EVE Online APIs
+
+@demo demo/index.html 
+-->
+
+<dom-module id="eve-sso">
+  <template>
+    <style>
+     :host {
+       display: block;
+     }
+    </style>
+    <content></content>
+  </template>
+
+  <script>
+   // Initialize the global security request object
+   // Other elements can request scopes here
+   
+   Polymer({
+     
+     is: 'eve-sso',
+     
+     properties: {
+       authorized: {
+	 type: Boolean,
+	 value: false,
+	 readOnly: true,
+	 reflectToAttribute: true,
+       },
+       clientId: {
+	 type: String,
+	 reflectToAttribute: true,
+       },
+       redirectUri: {
+	 type: String,
+	 value: window.location.href.split('#')[0],
+	 reflectToAttribute: true,
+       },
+       token: {
+	 type: String,
+	 readOnly: true,
+	 reflectToAttribute: true,
+       },
+     },
+
+     attached: function () {
+       this._detectAuthentication();
+     },
+
+     _detectAuthentication: function () {
+       var hashString = window.location.hash.substring(1);
+	   
+       var params = {},
+	   regex = /([^&=]+)=([^&]*)/g,
+	   m;
+       while (m = regex.exec(hashString)) {
+	 params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+       }
+
+       if (params['access_token'] === undefined || params['access_token'].length == 0) {
+	 console.debug('eve-sso: Not authenticated');
+	 return;
+       }
+
+       if (params['token_type'] !== 'Bearer') {
+	 throw new Error("eve-sso: Expecting bearer token");
+       }
+       this._setToken(params['access_token']);
+       this._setAuthorized(true);
+
+       window.location.hash = '';
+     },
+
+     authorize: function () {
+       if (!this.clientId) {
+	 throw new Error("eve-sso: Missing clientId");
+       }
+       
+       var url = new URL('https://login.eveonline.com/oauth/authorize');
+       url.searchParams.set('response_type', 'token');
+       url.searchParams.set('redirect_uri', this.redirectUri);
+       url.searchParams.set('client_id', this.clientId);
+       url.searchParams.set('scope', 'esi-mail.read_mail.v1');
+
+       console.debug('eve-sso: Authenticating user at: '+url.href);
+
+       window.location = url;
+     },
+     
+   });
+  </script>
+</dom-module>

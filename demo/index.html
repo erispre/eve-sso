@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>eve-sso demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../eve-sso.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+    <style>
+     #auth {
+       display: none;
+       border-color: #180;
+       border-width: 1px;
+       border-style: solid;
+       padding: 0.2em;
+     }
+     eve-sso[authorized] #auth {
+       display: block;
+     }
+     eve-sso[authorized] #login {
+       display: none;
+     }
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic eve-sso demo</h3>
+      <demo-snippet>
+        <template>
+          <eve-sso client-id="ba6060682a2c4174bfb33b2955a43607">
+	    <button id="login">Login</button>
+	    <div id="auth">Authenticated!</div>
+	  </eve-sso>
+        </template>
+      </demo-snippet>
+    </div>
+    <script>
+     window.addEventListener('WebComponentsReady', function (e) {
+       document.getElementById('login').addEventListener('click', function (e) {
+	 document.querySelector('eve-sso').authorize();
+       });
+     });
+    </script>
+  </body>
+</html>
